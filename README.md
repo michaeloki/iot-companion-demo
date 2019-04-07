@@ -10,8 +10,7 @@ To run this project on Android Studio do the following:
 5. Ensure you have Internet connection so that the gradle files for the third party libraries can be downloaded
 6. Connect your device to the PC and grant permission when prompted. (Ensure Developer option is enabled on your phone)
 7. Click on Run and select your device from the popup window.
-
-===========================================================================
+===========================================================
 BUILD
 
 To create an apk file,do these:
