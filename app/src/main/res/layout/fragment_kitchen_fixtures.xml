@@ -1,14 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".viewController.KitchenFixturesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <FrameLayout
+        android:id="@+id/kitchenFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_marginTop="?android:attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/thekitchen">
+        <ProgressBar
+            android:id="@+id/kitchenProgress"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:indeterminate="true"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            tools:layout_editor_absoluteX="25dp"
+            tools:layout_editor_absoluteY="25dp" />
 
-</FrameLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_kitchen_fixtures"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="@dimen/frame_height"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>

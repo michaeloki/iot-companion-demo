@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-//import com.inspirati.carsearch.*
 import android.content.Intent
-import android.graphics.Color
 import android.support.v4.content.LocalBroadcastManager
 import com.inspirati.iotcompanion.MainActivity
 import com.inspirati.iotcompanion.R
@@ -39,12 +37,6 @@ class RoomArrayAdapter(layoutId:Int, roomsList:ArrayList<RoomItem>):
     }
 
     override fun onBindViewHolder(holder:ViewHolder, listPosition:Int) {
-        /*if(listPosition %2 == 1) {
-            holder.itemView.setBackgroundColor(Color.parseColor("#BBDEFB"))
-        }
-        else {
-            holder.itemView.setBackgroundColor(Color.parseColor("#F5F5F5"))
-        }*/
         val messageText = holder.messageText
         messageText.text = roomsList[listPosition].messageText
     }
@@ -55,8 +47,6 @@ class RoomArrayAdapter(layoutId:Int, roomsList:ArrayList<RoomItem>):
             itemView.setOnClickListener(this)
             messageText = itemView.findViewById(R.id.room_item)
             messageText.setOnClickListener {
-                //MainActivity().listItemPosition = layoutPosition
-
                 val intent = Intent("navigation-message")
                 intent.putExtra("layoutPosition",layoutPosition)
                 LocalBroadcastManager.getInstance(MainActivity()).sendBroadcast(intent)

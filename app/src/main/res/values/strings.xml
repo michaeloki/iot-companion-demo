@@ -1,7 +1,36 @@
 <resources>
     <string name="app_name">IoTCompanion</string>
+    <string name="home_title">Home</string>
+    <string name="launch_icon_text">launch icon</string>
+    <string name="rooms">allRooms</string>
+    <string name="rooms_title">Rooms</string>
+    <string name="bedroomData">BedRoomData</string>
+    <string name="kitchenData">KitchenData</string>
+    <string name="livingRoomData">LivingRoomData</string>
+    <string name="add_bedlist_text">populateBedList</string>
+    <string name="add_kitchenlist_text">populateKitchenList</string>
+    <string name="add_livingroomlist_text">populateLivingList</string>
+    <string name="navigate">navigation-message</string>
+    <string name="bedroomfixtures">bedfixtures</string>
+    <string name="kitchenfixtures">kitchenfixtures</string>
+    <string name="livingroomfixtures">livingfixtures</string>
+    <string name="livingroomlabel">LIVINGROOM</string>
+    <string name="livingroomtitle">Living Room</string>
+    <string name="roomIntent">room-intent</string>
+    <string name="myBedString">myBedString</string>
+    <string name="myKitchenString">myKitchenString</string>
+    <string name="myLivingRoomString">myLivingRoomString</string>
+    <string name="greatString">Great!</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="refresh">Refresh</string>
+    <string name="bedroom_fixtures_title">Bedroom Fixtures</string>
+    <string name="kitchen_fixtures_title">Kitchen Fixtures</string>
+    <string name="living_room_fixtures_title">Living Room Fixtures</string>
+    <string name="adjustAirConditioner">AdjustAirConditioner</string>
+    <string name="AirConditioner">AC</string>
+    <string name="successMessage">Successful update</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="launch_icon_text">launch icon</string>
 </resources>

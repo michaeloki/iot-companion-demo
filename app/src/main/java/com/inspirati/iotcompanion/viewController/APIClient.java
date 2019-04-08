@@ -1,4 +1,4 @@
-package com.inspirati.iotcompanion;
+package com.inspirati.iotcompanion.viewController;
 
 
 import okhttp3.OkHttpClient;
