@@ -30,7 +30,6 @@
     <string name="adjustAirConditioner">AdjustAirConditioner</string>
     <string name="AirConditioner">AC</string>
     <string name="successMessage">Successful update</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="switchOnACMessage">AC was turned on</string>
+    <string name="switchOffACMessage">AC was turned off</string>
 </resources>

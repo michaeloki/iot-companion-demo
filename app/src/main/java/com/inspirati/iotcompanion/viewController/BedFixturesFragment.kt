@@ -11,7 +11,6 @@ import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +32,7 @@ import java.lang.NullPointerException
 class BedFixturesFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
+    //private lateinit var bedSwitch: Switch
     private lateinit var apiInterface: APIInterface
 
     var bedList: ArrayList<BedFixtureItem> = ArrayList()
@@ -42,6 +42,8 @@ class BedFixturesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_bed_fixtures, container, false)
+
+        //bedSwitch  = view!!.findViewById(R.id.bedSwitch)
 
         bedList.clear()
 
@@ -72,7 +74,6 @@ class BedFixturesFragment : Fragment() {
                     intent.putExtra("state", "true")
                     LocalBroadcastManager.getInstance(MainActivity()).sendBroadcast(intent)
                 }
-            Log.i("temp",prefMgr.getMyKey("the_temp"))
 
                 bedList.add(BedFixtureItem(item,newJSON.getString(i),prefMgr.getMyKey("the_temp")))
                 val newItemArrayAdapter = BedFixtureArrayAdapter(R.layout.list_item_bed_fixture, bedList)
@@ -118,12 +119,11 @@ class BedFixturesFragment : Fragment() {
         return view
     }
 
+    //override fun
+
     fun LoadBedroomList(bedString: String) {
-
         bedList.clear()
-
         val jsonArrayBed = JSONArray(bedString)
-
 
         val prefMgr = SharedPreferenceManager(requireContext())
         val newJSON = JSONArray(prefMgr.getMyKey("bedroomFixtureStates"))
@@ -160,17 +160,13 @@ class BedFixturesFragment : Fragment() {
 
     private val switchAction: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+                    if (intent?.getStringExtra("state") == "false") {
+                        setSwitch("off",2)
+                    }
 
-            try {
-                val bedSwitch: Switch = view!!.findViewById(R.id.bedSwitch)
-                if (intent?.getStringExtra("state") == "false") {
-                    bedSwitch.isChecked = false
-                }
-
-                if (intent?.getStringExtra("state") == "true") {
-                    bedSwitch.isChecked = true
-                }
-            } catch (npe: NullPointerException){}
+                    if (intent?.getStringExtra("state") == "true") {
+                        setSwitch("on",2)
+                    }
         }
     }
 
@@ -178,6 +174,7 @@ class BedFixturesFragment : Fragment() {
         override fun onReceive(context: Context?, intent: Intent?) {
             try {
                 val bedSwitch: Switch = view!!.findViewById(R.id.bedSwitch)
+                if (bedSwitch!=null){
                 val pos = intent!!.getStringExtra("position")
                 val state = intent!!.getStringExtra("state")
 
@@ -187,11 +184,12 @@ class BedFixturesFragment : Fragment() {
                 if (state == "off") {
                     bedSwitch.isChecked = false
                 }
-            val prefMgr = SharedPreferenceManager(requireContext())
-            val newJSONList = JSONArray(prefMgr.getMyKey("bedroomFixtureStates"))
-            newJSONList.put(pos.toInt(),state)
-            prefMgr.setMyKey("bedroomFixtureStates", newJSONList.toString())
-            setSwitch(state,pos.toInt())
+                val prefMgr = SharedPreferenceManager(requireContext())
+                val newJSONList = JSONArray(prefMgr.getMyKey("bedroomFixtureStates"))
+                newJSONList.put(pos.toInt(), state)
+                prefMgr.setMyKey("bedroomFixtureStates", newJSONList.toString())
+                setSwitch(state, pos.toInt())
+            }
             } catch (npe:NullPointerException) {}
         }
     }
@@ -206,6 +204,28 @@ class BedFixturesFragment : Fragment() {
                     val newJSON = JSONArray(prefMgr.getMyKey("bedroomData"))
                     newJSON.remove(2)
                     newJSON.put(2, "AC $temp")
+                    val bedroomState = JSONArray(prefMgr.getMyKey("bedroomFixtureStates"))
+                    bedroomState.remove(2)
+                        if (bedroomState.getString(2) == "off") {
+                                bedroomState.put(2, "on")
+                            prefMgr.setMyKey("bedroomFixtureStates", bedroomState.toString())
+                        }
+                    prefMgr.setMyKey("bedroomData", newJSON.toString())
+                    LoadBedroomList(prefMgr.getMyKey("bedString"))
+                } catch (exp:Exception) {}
+            } else {
+                try {
+                    val prefMgr = SharedPreferenceManager(requireContext())
+                    prefMgr.setMyKey("the_temp", temp)
+                    val newJSON = JSONArray(prefMgr.getMyKey("bedroomData"))
+                    newJSON.remove(2)
+                    newJSON.put(2, "AC $temp")
+                    val bedroomState = JSONArray(prefMgr.getMyKey("bedroomFixtureStates"))
+                    bedroomState.remove(2)
+                    if (bedroomState.getString(2) == "on") {
+                        bedroomState.put(2, "off")
+                        prefMgr.setMyKey("bedroomFixtureStates", bedroomState.toString())
+                    }
                     prefMgr.setMyKey("bedroomData", newJSON.toString())
                     LoadBedroomList(prefMgr.getMyKey("bedString"))
                 } catch (exp:Exception) {}
@@ -240,7 +260,7 @@ class BedFixturesFragment : Fragment() {
                     }
 
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        Toast.makeText(requireContext(), getString(R.string.successMessage), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.switchOnACMessage), Toast.LENGTH_SHORT).show()
                     }
                 })
             }
@@ -254,7 +274,7 @@ class BedFixturesFragment : Fragment() {
                     }
 
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        Toast.makeText(requireContext(), getString(R.string.successMessage), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.switchOffACMessage), Toast.LENGTH_SHORT).show()
                     }
                 })
             }
