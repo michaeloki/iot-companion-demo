@@ -1,4 +1,6 @@
 # iot-companion-demo
+
+# Project Setup
 This is a demo Android app for controlling your Smart Home
 
 To run this project on Android Studio do the following:
@@ -11,13 +13,13 @@ To run this project on Android Studio do the following:
 6. Connect your device to the PC and grant permission when prompted. (Ensure Developer option is enabled on your phone)
 7. Click on Run and select your device from the popup window.
 
-####BUILD####
+# App Build
 
 To create an apk file,do these:
 1. Click on the Build from the menu at the top of Android Studio
 2. Select Debug
 
-#######TECH DECISION#####
+# Tech Decision
 I used an activity and four fragments,namely: Home,Bedroom,Living Room and Kitchen.
 Since the rooms are part of the home it makes sense to use fragments in lieu of activities.
 Intents were used to share data across the fragments and activity.
