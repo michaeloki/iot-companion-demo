@@ -11,13 +11,12 @@ import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.inspirati.iotcompanion.MainActivity
 import com.inspirati.iotcompanion.R
 import com.inspirati.iotcompanion.adapter.RoomArrayAdapter
 import com.inspirati.iotcompanion.model.GetRooms
@@ -74,35 +73,15 @@ class HomeFragment : Fragment() {
         recyclerView.adapter = itemArrayAdapter
         apiInterface = APIClient.getClient().create(APIInterface::class.java)
 
-        /*try {
-            Log.i("STARTFETCH",arguments!!.getString("fetchInfo"))
-            if(arguments!!.getString("fetchInfo")=="yes") {
-                getAllRooms()
-            }
-        } catch(exp:Exception) {
-            Log.i("EXCEPSTART",exp.message.toString())
-        }*/
-
-
-        /*LocalBroadcastManager.getInstance(requireContext()).registerReceiver(getRoomsFromApi,
-            IntentFilter(MainActivity().GETROOM_STATUS_UPDATE)
-        )*/
         getAllRooms()
 
         return view
     }
 
-    /*private var getRoomsFromApi: BroadcastReceiver = object: BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            Log.i("GOTTA","GOTSIGNAL")
-            //getAllRooms()
-        }
-    }*/
 
     private var itemMessageReceiver: BroadcastReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val itemPos = intent.getIntExtra("layoutPosition",0)
-            Log.i("itemmmm","position $itemPos")
 
             if(itemPos == 0) {
                 LocalBroadcastManager.getInstance(requireContext())
@@ -165,24 +144,6 @@ class HomeFragment : Fragment() {
                         preferenceManager.setMyKey("livingRoomData", jsonArrayLiving.toString())
 
                         if (jsonArrayBed.length() > 0) {
-                            //BedFixturesFragment().bedList.clear()
-                            //val myBedList = BedFixturesFragment().bedList
-
-                            //Log.i("getALL12222LIV",jsonArrayBed.get(0).toString())
-
-                            //val objectKey = jsonArrayBed.getJSONObject(i)
-
-                            //val status = objectKey.getString("status")
-
-                            /*try {
-                                LocalBroadcastManager.getInstance(this@MainActivity)
-                                    .sendBroadcast(Intent(BEDLIST_STATUS_UPDATE))
-                                LocalBroadcastManager.getInstance(this@MainActivity)
-                                    .sendBroadcast(Intent(KITCHENLIST_STATUS_UPDATE))
-                                LocalBroadcastManager.getInstance(this@MainActivity)
-                                    .sendBroadcast(Intent(LIVINGLIST_STATUS_UPDATE))
-                            } catch(e:Exception) {
-                            }*/
                         }
                     } catch (exp: JSONException) {
                         Toast.makeText(requireContext(), exp.localizedMessage, Toast.LENGTH_LONG).show()

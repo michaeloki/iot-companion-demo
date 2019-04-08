@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,6 +72,7 @@ class BedFixturesFragment : Fragment() {
                     intent.putExtra("state", "true")
                     LocalBroadcastManager.getInstance(MainActivity()).sendBroadcast(intent)
                 }
+            Log.i("temp",prefMgr.getMyKey("the_temp"))
 
                 bedList.add(BedFixtureItem(item,newJSON.getString(i),prefMgr.getMyKey("the_temp")))
                 val newItemArrayAdapter = BedFixtureArrayAdapter(R.layout.list_item_bed_fixture, bedList)
