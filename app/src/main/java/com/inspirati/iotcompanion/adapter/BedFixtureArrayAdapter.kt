@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.content.Intent
 import android.support.v4.content.LocalBroadcastManager
-import android.util.Log
 import android.widget.*
 import com.inspirati.iotcompanion.MainActivity
 import com.inspirati.iotcompanion.R
@@ -44,12 +43,10 @@ class BedFixtureArrayAdapter(layoutId:Int, fixturesList:ArrayList<BedFixtureItem
         if(listPosition!=2) {
             fixture.text = fixturesList[listPosition].fixture
             status.text = fixturesList[listPosition].status
-            Log.i("fromBED",status.text.toString())
         } else {
             fixture.text = fixturesList[listPosition].fixture
             status.text = fixturesList[listPosition].status
             temp.text = fixturesList[listPosition].temp
-            Log.i("fromBED2",status.text.toString())
         }
     }
 
