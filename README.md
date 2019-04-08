@@ -5,7 +5,7 @@ This is a demo Android app for controlling your Smart Home
 
 To run this project on Android Studio do the following:
 
-1. Clone this repository on your machine
+1. Clone this repository (https://github.com/michaeloki/iot-companion-demo) on your machine
 2. Extract the folder to your development directory
 3. Open Android Studio and click on File>>Open
 4. Choose the directory in step 2 
