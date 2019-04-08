@@ -118,13 +118,13 @@ class KitchenFixturesFragment : Fragment() {
     private val switchAction: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             try {
-                val livingSwitch: Switch = view!!.findViewById(R.id.kitchenSwitch)
+                val kitchenSwitch: Switch = view!!.findViewById(R.id.kitchenSwitch)
                 if (intent?.getStringExtra("state") == "false") {
-                    livingSwitch.isChecked = false
+                    kitchenSwitch.isChecked = false
                 }
 
                 if (intent?.getStringExtra("state") == "true") {
-                    livingSwitch.isChecked = true
+                    kitchenSwitch.isChecked = true
                 }
             } catch (npe: NullPointerException){}
         }
@@ -132,22 +132,24 @@ class KitchenFixturesFragment : Fragment() {
 
     private val manualAction: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            val livingSwitch: Switch = view!!.findViewById(R.id.kitchen)
-            val pos = intent!!.getStringExtra("position")
-            val state = intent!!.getStringExtra("state")
+            try {
+                val kitchenSwitch: Switch = view!!.findViewById(R.id.kitchenSwitch)
+                val pos = intent!!.getStringExtra("position")
+                val state = intent!!.getStringExtra("state")
 
-            if(state=="on") {
-                livingSwitch.isChecked = true
-            }
-            if(state=="off") {
-                livingSwitch.isChecked = false
-            }
+                if (state == "on") {
+                    kitchenSwitch.isChecked = true
+                }
+                if (state == "off") {
+                    kitchenSwitch.isChecked = false
+                }
 
-            val prefMgr = SharedPreferenceManager(requireContext())
-            val newJSONList = JSONArray(prefMgr.getMyKey("kitchenFixtureStates"))
-            newJSONList.put(pos.toInt(),state)
-            prefMgr.setMyKey("kitchenFixtureStates", newJSONList.toString())
-            setKitchenSwitch(state,pos.toInt())
+                val prefMgr = SharedPreferenceManager(requireContext())
+                val newJSONList = JSONArray(prefMgr.getMyKey("kitchenFixtureStates"))
+                newJSONList.put(pos.toInt(), state)
+                prefMgr.setMyKey("kitchenFixtureStates", newJSONList.toString())
+                setKitchenSwitch(state, pos.toInt())
+            } catch (exp:Exception) {}
         }
     }
 
