@@ -14,7 +14,7 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="dimen_8">8dp</dimen>
-    <dimen name="frame_height">112dp</dimen>
+    <dimen name="frame_height">80dp</dimen>
     <dimen name="bottom_margin_5">5dp</dimen>
     <dimen name="textSpacing">15dp</dimen>
 </resources>

@@ -4,6 +4,7 @@ package com.inspirati.iotcompanion
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.inspirati.iotcompanion.viewController.HomeActivity
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +14,7 @@ class SplashActivity : AppCompatActivity() {
             override fun run() {
                 try {
                     Thread.sleep(1500)
-                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    val intent = Intent(applicationContext, HomeActivity::class.java)
                     startActivity(intent)
                     finish()
                 } catch (e: InterruptedException) {

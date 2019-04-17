@@ -8,10 +8,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.content.Intent
 import android.support.v4.content.LocalBroadcastManager
-import android.widget.Switch
-import com.inspirati.iotcompanion.MainActivity
 import com.inspirati.iotcompanion.R
 import com.inspirati.iotcompanion.model.KitchenFixtureItem
+import com.inspirati.iotcompanion.viewController.HomeActivity
 
 
 class KitchenFixtureArrayAdapter(layoutId:Int, fixturesList:ArrayList<KitchenFixtureItem>):
@@ -50,26 +49,13 @@ class KitchenFixtureArrayAdapter(layoutId:Int, fixturesList:ArrayList<KitchenFix
         init{
             itemView.setOnClickListener(this)
             kitchen = itemView.findViewById(R.id.kitchen)
-            val kitchenSwitch: Switch = itemView.findViewById(R.id.kitchenSwitch)
-
-            kitchenSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    val intent = Intent("manual-kitchen-switch-message")
-                    intent.putExtra("state","on")
-                    intent.putExtra("position",layoutPosition.toString())
-                    LocalBroadcastManager.getInstance(MainActivity()).sendBroadcast(intent)
-                } else {
-                    val intent = Intent("manual-kitchen-switch-message")
-                    intent.putExtra("state","off")
-                    intent.putExtra("position",layoutPosition.toString())
-                    LocalBroadcastManager.getInstance(MainActivity()).sendBroadcast(intent)
-                }
-            }
-            kitchen = itemView.findViewById(R.id.kitchen)
             status = itemView.findViewById(R.id.kitchen_status)
         }
 
         override fun onClick(view: View) {
+            val intent = Intent("switch-kitchen-message")
+            intent.putExtra("itemPosition",layoutPosition.toString())
+            LocalBroadcastManager.getInstance(HomeActivity()).sendBroadcast(intent)
         }
     }
 

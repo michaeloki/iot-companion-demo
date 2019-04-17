@@ -23,6 +23,7 @@
     <string name="greatString">Great!</string>
     <string name="on">On</string>
     <string name="off">Off</string>
+    <string name="toggle">Toggle</string>
     <string name="refresh">Refresh</string>
     <string name="bedroom_fixtures_title">Bedroom Fixtures</string>
     <string name="kitchen_fixtures_title">Kitchen Fixtures</string>
@@ -32,4 +33,5 @@
     <string name="successMessage">Successful update</string>
     <string name="switchOnACMessage">AC was turned on</string>
     <string name="switchOffACMessage">AC was turned off</string>
+    <string name="keepControlling">Keep Controlling Your Rooms</string>
 </resources>

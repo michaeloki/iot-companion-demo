@@ -5,31 +5,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".viewController.HomeFragment">
+    tools:context=".viewController.MyBedroomFragment">
 
 
     <FrameLayout
-        android:id="@+id/homeFrame"
+        android:id="@+id/bedFrame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="?android:attr/actionBarSize"
         android:background="@drawable/nightlight">
-        <ProgressBar
-            android:id="@+id/homeProgress"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:indeterminate="true"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="gone"
-            tools:layout_editor_absoluteX="25dp"
-            tools:layout_editor_absoluteY="25dp" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/list_rooms"
+            android:id="@+id/list_bed_fixtures"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"

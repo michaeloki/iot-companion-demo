@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.content.Intent
 import android.support.v4.content.LocalBroadcastManager
 import android.widget.*
-import com.inspirati.iotcompanion.MainActivity
 import com.inspirati.iotcompanion.R
 import com.inspirati.iotcompanion.model.BedFixtureItem
+import com.inspirati.iotcompanion.viewController.HomeActivity
 
 
 class BedFixtureArrayAdapter(layoutId:Int, fixturesList:ArrayList<BedFixtureItem>):
@@ -56,27 +56,15 @@ class BedFixtureArrayAdapter(layoutId:Int, fixturesList:ArrayList<BedFixtureItem
         var temp: TextView
 
         init {
-            val bedSwitch: Switch = itemView.findViewById(R.id.bedSwitch)
-
-            bedSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    val intent = Intent("manual-switch-message")
-                    intent.putExtra("state","on")
-                    intent.putExtra("position",layoutPosition.toString())
-                    LocalBroadcastManager.getInstance(MainActivity()).sendBroadcast(intent)
-                } else {
-                    val intent = Intent("manual-switch-message")
-                    intent.putExtra("state","off")
-                    intent.putExtra("position",layoutPosition.toString())
-                    LocalBroadcastManager.getInstance(MainActivity()).sendBroadcast(intent)
-                }
-            }
-
+            itemView.setOnClickListener(this)
             fixture = itemView.findViewById(R.id.fixture)
             status = itemView.findViewById(R.id.status)
             temp = itemView.findViewById(R.id.temp)
         }
         override fun onClick(view: View) {
+            val intent = Intent("switch-message")
+            intent.putExtra("itemPosition",layoutPosition.toString())
+            LocalBroadcastManager.getInstance(HomeActivity()).sendBroadcast(intent)
         }
     }
 }
