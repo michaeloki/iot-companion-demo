@@ -39,6 +39,7 @@ class MyBedroomFragment : Fragment() {
     lateinit var database:Database
     lateinit var mutableDoc: MutableDocument
     private lateinit var bedroomSwitchStates: String
+    private lateinit var myBedstates:String
 
     var bedList: ArrayList<BedFixtureItem> = ArrayList()
 
@@ -84,6 +85,11 @@ class MyBedroomFragment : Fragment() {
 
     private val loadListReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            try {
+                myBedstates = intent!!.getStringExtra("bedStates")
+            } catch (e: Exception) {
+                myBedstates = "['off','off','off']"
+            }
             populateBedroomList()
         }
     }
@@ -93,10 +99,15 @@ class MyBedroomFragment : Fragment() {
         val query = QueryBuilder
             .select(SelectResult.expression(Meta.id),
                 SelectResult.property(getString(R.string.bedroomData)))
-            //SelectResult.property("bedroomFixtureStates"))
             .from(DataSource.database(database))
             .where(Expression.property(getString(R.string.bedroomData))
                 .isNot(Expression.string(null)))
+/*
+
+        val queryStates = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("bedroomFixtureStates").isNot(Expression.string(null)))*/
+
         try
         {
             val rs = query.execute()
@@ -116,8 +127,17 @@ class MyBedroomFragment : Fragment() {
                 .where(Expression.property("bedroomFixtureStates")
                     .isNot(Expression.string(null)))
             val rsStates = queryStates.execute()
-
-            bedroomSwitchStates = rsStates.allResults().last().getString("bedroomFixtureStates")
+            //if(rsStates.allResults().size==0) {
+                //val initialState = "['off','off','off']"
+                //val myBedSwitchArray = JSONArray(initialState).toString()
+                //bedroomSwitchStates = JSONArray(initialState).toString()
+                //bedroomSwitchStates = myBedSwitchArray.toString()
+            //} else {
+            try {
+                bedroomSwitchStates = rsStates.allResults().last().getString("bedroomFixtureStates")
+            } catch(e:Exception) {
+                bedroomSwitchStates = myBedstates
+            }
 
             val newJSON = JSONArray(bedroomSwitchStates)
             for (i in 0 until jsonArrayBed.length()) {

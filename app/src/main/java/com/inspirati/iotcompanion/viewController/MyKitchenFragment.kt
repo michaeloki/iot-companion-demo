@@ -29,6 +29,7 @@ import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
 import java.lang.NullPointerException
 
 
@@ -39,6 +40,7 @@ class MyKitchenFragment : Fragment() {
     lateinit var database:Database
     lateinit var mutableDoc: MutableDocument
     private lateinit var kitchenSwitchStates: String
+    private lateinit var myKitstates: String
 
     var kitchenList: ArrayList<KitchenFixtureItem> = ArrayList()
 
@@ -75,6 +77,11 @@ class MyKitchenFragment : Fragment() {
 
     private val loadKitchenListReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            try {
+                myKitstates = intent!!.getStringExtra("kitStates")
+            } catch (e:Exception) {
+                myKitstates = "['off','off','off']"
+            }
             populateKitchenList()
         }
     }
@@ -86,6 +93,13 @@ class MyKitchenFragment : Fragment() {
                 SelectResult.property(getString(R.string.kitchenData)))
             .from(DataSource.database(database))
             .where(Expression.property(getString(R.string.kitchenData))
+                .isNot(Expression.string(null)))
+
+        var queryStates = QueryBuilder
+            .select(SelectResult.expression(Meta.id),
+                SelectResult.property("kitchenFixtureStates"))
+            .from(DataSource.database(database))
+            .where(Expression.property("kitchenFixtureStates")
                 .isNot(Expression.string(null)))
         try
         {
@@ -99,16 +113,15 @@ class MyKitchenFragment : Fragment() {
                 .setString("kitchenString", initkitchenString)
             database.save(mutableDoc)
 
-            var queryStates = QueryBuilder
-                .select(SelectResult.expression(Meta.id),
-                    SelectResult.property("kitchenFixtureStates"))
-                .from(DataSource.database(database))
-                .where(Expression.property("kitchenFixtureStates")
-                    .isNot(Expression.string(null)))
-            val rsStates = queryStates.execute()
+            try {
+                val rsStates = queryStates.execute()
+                kitchenSwitchStates = rsStates.allResults().last().getString("kitchenFixtureStates")
+                Log.i("seemeLIVE",kitchenSwitchStates)
 
-            kitchenSwitchStates = rsStates.allResults().last().getString("kitchenFixtureStates")
-
+            } catch(e: Exception) {
+                kitchenSwitchStates = myKitstates
+                Log.i("seeme222dies",kitchenSwitchStates)
+            }
             val newJSON = JSONArray(kitchenSwitchStates)
             for (i in 0 until jsonArrayKit.length()) {
                 val item = jsonArrayKit.getString(i)
@@ -120,6 +133,7 @@ class MyKitchenFragment : Fragment() {
                 recyclerView.itemAnimator = DefaultItemAnimator()
                 recyclerView.adapter = newItemArrayAdapter
             }
+
         }
         catch (e:CouchbaseLiteException) {
             Log.e("savmsss3", e.localizedMessage)

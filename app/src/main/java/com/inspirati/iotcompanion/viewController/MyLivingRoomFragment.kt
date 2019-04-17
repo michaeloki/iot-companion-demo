@@ -28,6 +28,7 @@ import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
 import java.lang.NullPointerException
 
 
@@ -38,6 +39,8 @@ class MyLivingRoomFragment : Fragment() {
     lateinit var database:Database
     lateinit var mutableDoc: MutableDocument
     private lateinit var livingSwitchStates: String
+    private lateinit var myLivstates: String
+    private lateinit var myLivingstates: String
 
     var livingRoomList: ArrayList<LivingFixtureItem> = ArrayList()
 
@@ -74,6 +77,12 @@ class MyLivingRoomFragment : Fragment() {
 
     private val loadLivingListReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+
+            try {
+                myLivingstates = intent!!.getStringExtra("livingStates")
+            } catch (e: Exception) {
+                myLivingstates = "['off','off']"
+            }
             populateLivingRoomList()
         }
     }
@@ -86,6 +95,13 @@ class MyLivingRoomFragment : Fragment() {
             .from(DataSource.database(database))
             .where(Expression.property(getString(R.string.livingRoomData))
                 .isNot(Expression.string(null)))
+
+        val queryStates = QueryBuilder
+            .select(SelectResult.expression(Meta.id),
+                SelectResult.property("livingFixtureStates"))
+            .from(DataSource.database(database))
+            .where(Expression.property("livingFixtureStates")
+                .isNot(Expression.string(null)))
         try
         {
             val rs = query.execute()
@@ -97,28 +113,27 @@ class MyLivingRoomFragment : Fragment() {
             mutableDoc = MutableDocument()
                 .setString("livingString", initLivingString)
             database.save(mutableDoc)
+            try {
+                val rsStates = queryStates.execute()
+                try {
+                    livingSwitchStates = rsStates.allResults().last().getString("livingFixtureStates")
+                } catch(e:Exception) {
+                    livingSwitchStates = myLivingstates
+                }
 
-            var queryStates = QueryBuilder
-                .select(SelectResult.expression(Meta.id),
-                    SelectResult.property("livingFixtureStates"))
-                .from(DataSource.database(database))
-                .where(Expression.property("livingFixtureStates")
-                    .isNot(Expression.string(null)))
-            val rsStates = queryStates.execute()
+                val newJSON = JSONArray(livingSwitchStates)
+                for (i in 0 until jsonArrayLiving.length()) {
+                    val item = jsonArrayLiving.getString(i)
 
-            livingSwitchStates = rsStates.allResults().last().getString("livingFixtureStates")
-
-            val newJSON = JSONArray(livingSwitchStates)
-            for (i in 0 until jsonArrayLiving.length()) {
-                val item = jsonArrayLiving.getString(i)
-
-                livingRoomList.add(LivingFixtureItem(item,newJSON.getString(i)))
-                val newItemArrayAdapter = LivingFixtureArrayAdapter(R.layout.list_item_living_fixture, livingRoomList)
-                recyclerView = view!!.findViewById(R.id.list_living_fixtures)
-                recyclerView.layoutManager = LinearLayoutManager(context)
-                recyclerView.itemAnimator = DefaultItemAnimator()
-                recyclerView.adapter = newItemArrayAdapter
-            }
+                    livingRoomList.add(LivingFixtureItem(item, newJSON.getString(i)))
+                    val newItemArrayAdapter =
+                        LivingFixtureArrayAdapter(R.layout.list_item_living_fixture, livingRoomList)
+                    recyclerView = view!!.findViewById(R.id.list_living_fixtures)
+                    recyclerView.layoutManager = LinearLayoutManager(context)
+                    recyclerView.itemAnimator = DefaultItemAnimator()
+                    recyclerView.adapter = newItemArrayAdapter
+                }
+            } catch (e:CouchbaseLiteException){}
         }
         catch (e:CouchbaseLiteException) {
         }
@@ -160,7 +175,7 @@ class MyLivingRoomFragment : Fragment() {
         livingRoomList.clear()
         val livingSwitchArray = JSONArray(livingSwitchStates)
         livingSwitchArray.put(position,state)
-
+        Log.i("fixtureslivingstr",livingSwitchArray.toString())
         mutableDoc = MutableDocument()
             .setString("livingFixtureStates", livingSwitchArray.toString())
         database.save(mutableDoc)
@@ -197,7 +212,7 @@ class MyLivingRoomFragment : Fragment() {
                     call = apiInterface.turnOnLivingLightTwo()
                 }
                 if(state=="off") {
-                    call = apiInterface.turnOnLivingLightTwo()
+                    call = apiInterface.turnOffLivingLightTwo()
                 }
                 call.enqueue(object : Callback<ResponseBody> {
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

@@ -44,6 +44,9 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
     var myBedroomData = ""
     var myKitchenData = ""
     var myLivingRoomData = ""
+    var initBedArray = ""
+    var initLivingArray = ""
+    var initKitArray = ""
 
     lateinit var database:Database
     lateinit var mutableDoc: MutableDocument
@@ -96,9 +99,10 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
 
 
         val initialState = "['off','off','off']"
+        val initialLivingState = "['off','off']"
         val myBedSwitchArray = JSONArray(initialState)
         val myKitchenSwitchArray = JSONArray(initialState)
-        val myLivingSwitchArray = JSONArray(initialState)
+        val myLivingSwitchArray = JSONArray(initialLivingState)
 
 
         val config = DatabaseConfiguration(applicationContext)
@@ -110,15 +114,17 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
             .where(Expression.property("bedroomFixtureStates").isNot(Expression.string(null)))
         val result = query.execute()
 
-        if(!result.allResults().isNullOrEmpty()){
+        if(result.allResults().isNullOrEmpty()){
                 mutableDoc = MutableDocument()
                     .setString("bedroomFixtureStates", myBedSwitchArray.toString())
                     .setString("kitchenFixtureStates", myKitchenSwitchArray.toString())
                     .setString("livingFixtureStates", myLivingSwitchArray.toString())
             database.save(mutableDoc)
             mutableDoc = database.getDocument(mutableDoc.id).toMutable()
+            initBedArray = myBedSwitchArray.toString()
+            initKitArray = myKitchenSwitchArray.toString()
+            initLivingArray = myLivingSwitchArray.toString()
         }
-        getAllRooms()
 
         mReceiver = WeatherIntentServiceResultReceiver(Handler())
         mReceiver!!.setReceiver(this)
@@ -126,6 +132,7 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
         msgIntent.putExtra("receiver",mReceiver)
         msgIntent.putExtra("requestId","1101")
         this.startService(msgIntent)
+        getAllRooms()
     }
 
     private var mReceiver: WeatherIntentServiceResultReceiver? = null
@@ -155,14 +162,18 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
                             val document = database.getDocument(mutableDoc.id)
                             myBedroomData = document.getString(getString(R.string.bedroomData))
                             val intent = Intent("load-the-list")
+                            intent.putExtra("bedStates",initBedArray)
                             LocalBroadcastManager.getInstance(HomeActivity()).sendBroadcast(intent)
 
-                            myKitchenData = document.getString(getString(R.string.bedroomData))
+                            myKitchenData = document.getString(getString(R.string.kitchenData))
                             val kitchentIntent = Intent("load-kitchen-list")
+                            Log.i("nulli?",initKitArray)
+                            intent.putExtra("kitStates",initKitArray)
                             LocalBroadcastManager.getInstance(HomeActivity()).sendBroadcast(kitchentIntent)
 
-                            myLivingRoomData = document.getString(getString(R.string.bedroomData))
+                            myLivingRoomData = document.getString(getString(R.string.livingRoomData))
                             val livingRoomIntent = Intent("load-living-list")
+                            intent.putExtra("livingStates",initLivingArray)
                             LocalBroadcastManager.getInstance(HomeActivity()).sendBroadcast(livingRoomIntent)
 
                         } catch (exp: JSONException) {
