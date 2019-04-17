@@ -22,12 +22,14 @@ To create an apk file,do these:
 2. Select Debug
 
 # Tech Decision
-I used an activity and four fragments,namely: Home,Bedroom,Living Room and Kitchen.
+I used an activity and three fragments,namely: Bedroom,Living Room and Kitchen.
 Since the rooms are part of the home it makes sense to use fragments in lieu of activities.
 Intents were used to share data across the fragments and activity.
 A background intent service was used to ping the weatherAPI every three minutes. The intent service doesn't run on the same thread as the activity, hence, the app won't hang and the system resource won't be exhausted. 
 
 Retrofit library was used to make the API calls while the POJO files in the models directory had the data structure for the various endpoints.
+
+CouchDBLite was used to save the offline data.
 
 Robolectric library was also used for creating the unit tests.
 
