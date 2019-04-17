@@ -3,7 +3,7 @@
 # Project Setup
 This is a demo Android app for controlling your Smart Home
 
-![alt text](https://github.com/michaeloki/iot-companion-demo/blob/master/newiotdemo.gif)
+![alt text](https://github.com/michaeloki/iot-companion-demo/blob/master/screenshot.gif)
 
 To run this project on Android Studio(https://developer.android.com/studio) do the following:
 
