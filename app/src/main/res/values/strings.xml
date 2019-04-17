@@ -34,4 +34,6 @@
     <string name="switchOnACMessage">AC was turned on</string>
     <string name="switchOffACMessage">AC was turned off</string>
     <string name="keepControlling">Keep Controlling Your Rooms</string>
+    <string name="firstTimeMessage">First time usage: Please go online</string>
+    <string name="localDBError">Oops! Please go online and try again</string>
 </resources>

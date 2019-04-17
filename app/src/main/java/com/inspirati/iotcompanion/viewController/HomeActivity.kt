@@ -12,11 +12,8 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.app_bar_menu.*
 import com.couchbase.lite.*
@@ -29,12 +26,12 @@ import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.NullPointerException
 
 class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Receiver {
 
     var adjustAirConditioner = "AdjustAirConditioner"
     private lateinit var apiInterface: APIInterface
-    private lateinit var recyclerView: RecyclerView
     lateinit var jsonArrayBed: JSONArray
     lateinit var jsonArrayKitchen: JSONArray
     lateinit var jsonArrayLiving: JSONArray
@@ -47,6 +44,9 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
     var initBedArray = ""
     var initLivingArray = ""
     var initKitArray = ""
+    var initBedData = ""
+    var initKitData = ""
+    var initLivingData = ""
 
     lateinit var database:Database
     lateinit var mutableDoc: MutableDocument
@@ -97,7 +97,6 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
         }
         viewPager.offscreenPageLimit = 2
 
-
         val initialState = "['off','off','off']"
         val initialLivingState = "['off','off']"
         val myBedSwitchArray = JSONArray(initialState)
@@ -124,6 +123,41 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
             initBedArray = myBedSwitchArray.toString()
             initKitArray = myKitchenSwitchArray.toString()
             initLivingArray = myLivingSwitchArray.toString()
+        } else {
+            val configCtx = DatabaseConfiguration(applicationContext)
+
+            database = Database("iotDB", configCtx)
+
+            val queryBedData = QueryBuilder
+                .select(SelectResult.expression(Meta.id),
+                    SelectResult.property(getString(R.string.bedroomData)))
+                .from(DataSource.database(database))
+                .where(Expression.property(getString(R.string.bedroomData))
+                    .isNot(Expression.string(null)))
+
+            val queryKitData = QueryBuilder
+                .select(SelectResult.expression(Meta.id),
+                    SelectResult.property(getString(R.string.kitchenData)))
+                .from(DataSource.database(database))
+                .where(Expression.property(getString(R.string.kitchenData))
+                    .isNot(Expression.string(null)))
+
+            val queryLivData = QueryBuilder
+                .select(SelectResult.expression(Meta.id),
+                    SelectResult.property(getString(R.string.livingRoomData)))
+                .from(DataSource.database(database))
+                .where(Expression.property(getString(R.string.livingRoomData))
+                    .isNot(Expression.string(null)))
+            try {
+                val resultBedData = queryBedData.execute()
+                val resultKitData = queryKitData.execute()
+                val resultLivData = queryLivData.execute()
+                initBedData = resultBedData.allResults().last().getString(getString(R.string.bedroomData))
+                initKitData = resultKitData.allResults().last().getString(getString(R.string.kitchenData))
+                initLivingData = resultLivData.allResults().last().getString(getString(R.string.livingRoomData))
+            } catch(npe:NullPointerException) {
+                Log.i("COUCHDBLOCAL",npe.message)
+            }
         }
 
         mReceiver = WeatherIntentServiceResultReceiver(Handler())
@@ -142,6 +176,7 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
 
             call.enqueue(object : Callback<GetRooms> {
                 override fun onResponse(call: Call<GetRooms>, response: Response<GetRooms>) {
+
                     if (response.isSuccessful) {
                         try {
                             val bed = response.body()?.rooms?.bedroom?.fixtures
@@ -160,6 +195,7 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
 
                             mutableDoc = database.getDocument(mutableDoc.id).toMutable()
                             val document = database.getDocument(mutableDoc.id)
+
                             myBedroomData = document.getString(getString(R.string.bedroomData))
                             val intent = Intent("load-the-list")
                             intent.putExtra("bedStates",initBedArray)
@@ -167,7 +203,6 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
 
                             myKitchenData = document.getString(getString(R.string.kitchenData))
                             val kitchentIntent = Intent("load-kitchen-list")
-                            Log.i("nulli?",initKitArray)
                             intent.putExtra("kitStates",initKitArray)
                             LocalBroadcastManager.getInstance(HomeActivity()).sendBroadcast(kitchentIntent)
 
@@ -183,36 +218,49 @@ class HomeActivity : AppCompatActivity(), WeatherIntentServiceResultReceiver.Rec
                 }
 
                 override fun onFailure(call: Call<GetRooms>, t: Throwable) {
-
-                    val document = database.getDocument(mutableDoc.id)
-                    val bedRoomData = document.getString("bedroomData")
-                    if (bedRoomData.isNullOrBlank()) {
-                        Toast.makeText(this@HomeActivity, t.toString(), Toast.LENGTH_SHORT).show()
+                    if(initBedData.isEmpty()) {
+                        Toast.makeText(this@HomeActivity, getString(R.string.firstTimeMessage),
+                            Toast.LENGTH_LONG).show()
                     } else {
                         try {
-                            val kitchen = document.getString(getString(R.string.kitchenData))
-                            val living = document.getString(getString(R.string.livingRoomData))
+                            val bedRoomData = initBedData
+                            val kitchen = initKitData
+                            val living = initLivingData
 
-                            jsonArrayBed = JSONArray(bedRoomData)
-                            jsonArrayKitchen = JSONArray(kitchen)
-                            jsonArrayLiving = JSONArray(living)
+                            myBedroomData = bedRoomData
+                            val intent = Intent("load-the-list")
+                            intent.putExtra("bedStates",initBedArray)
+                            LocalBroadcastManager.getInstance(HomeActivity()).sendBroadcast(intent)
 
-                            if (jsonArrayBed.length() > 0) {
-                                MyBedroomFragment().bedList.clear()
+                            myKitchenData = kitchen
+                            val kitchentIntent = Intent("load-kitchen-list")
+                            intent.putExtra("kitStates",initKitArray)
+                            LocalBroadcastManager.getInstance(HomeActivity()).sendBroadcast(kitchentIntent)
 
-                                try {
-                                    LocalBroadcastManager.getInstance(this@HomeActivity)
-                                        .sendBroadcast(Intent(BEDLIST_STATUS_UPDATE))
-                                    LocalBroadcastManager.getInstance(this@HomeActivity)
-                                        .sendBroadcast(Intent(KITCHENLIST_STATUS_UPDATE))
-                                    LocalBroadcastManager.getInstance(this@HomeActivity)
-                                        .sendBroadcast(Intent(LIVINGLIST_STATUS_UPDATE))
-                                } catch (e: Exception) {
-                                }
-                            }
+                            myLivingRoomData = living
+                            val livingRoomIntent = Intent("load-living-list")
+                            intent.putExtra("livingStates",initLivingArray)
+                            LocalBroadcastManager.getInstance(HomeActivity()).sendBroadcast(livingRoomIntent)
 
-                        } catch (exp: JSONException) {
-                            Toast.makeText(this@HomeActivity, exp.localizedMessage, Toast.LENGTH_LONG).show()
+                                    jsonArrayBed = JSONArray(bedRoomData)
+                                    jsonArrayKitchen = JSONArray(kitchen)
+                                    jsonArrayLiving = JSONArray(living)
+
+                                    /*if (jsonArrayBed.length() > 0) {
+                                        MyBedroomFragment().bedList.clear()
+                                        try {
+                                            LocalBroadcastManager.getInstance(this@HomeActivity)
+                                                .sendBroadcast(Intent(BEDLIST_STATUS_UPDATE))
+                                            LocalBroadcastManager.getInstance(this@HomeActivity)
+                                                .sendBroadcast(Intent(KITCHENLIST_STATUS_UPDATE))
+                                            LocalBroadcastManager.getInstance(this@HomeActivity)
+                                                .sendBroadcast(Intent(LIVINGLIST_STATUS_UPDATE))
+                                        } catch (e: Exception) {
+                                        }
+                                    }*/
+                        } catch(npe:NullPointerException){
+                            Toast.makeText(this@HomeActivity, getString(R.string.localDBError),
+                                Toast.LENGTH_LONG).show()
                         }
                     }
                 }

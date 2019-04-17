@@ -116,11 +116,8 @@ class MyKitchenFragment : Fragment() {
             try {
                 val rsStates = queryStates.execute()
                 kitchenSwitchStates = rsStates.allResults().last().getString("kitchenFixtureStates")
-                Log.i("seemeLIVE",kitchenSwitchStates)
-
             } catch(e: Exception) {
                 kitchenSwitchStates = myKitstates
-                Log.i("seeme222dies",kitchenSwitchStates)
             }
             val newJSON = JSONArray(kitchenSwitchStates)
             for (i in 0 until jsonArrayKit.length()) {

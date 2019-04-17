@@ -4,7 +4,6 @@ import android.app.IntentService
 import android.content.Intent
 import android.os.Bundle
 import android.os.ResultReceiver
-import android.util.Log
 import android.widget.Toast
 import com.inspirati.iotcompanion.model.Weather
 import retrofit2.Call
@@ -31,7 +30,7 @@ class WeatherIntentService : IntentService("WeatherIntentService") {
                     val call = apiInterface.getWeather
                     call.enqueue(object : Callback<Weather> {
                         override fun onFailure(call: Call<Weather>, t: Throwable) {
-                            Toast.makeText(this@WeatherIntentService, t.toString(), Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(this@WeatherIntentService, t.toString(), Toast.LENGTH_SHORT).show()
                         }
 
                         override fun onResponse(call: Call<Weather>, response: Response<Weather>) {

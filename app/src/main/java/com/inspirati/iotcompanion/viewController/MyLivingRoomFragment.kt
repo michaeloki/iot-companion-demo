@@ -14,7 +14,7 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Html
-import android.util.Log
+//import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +39,6 @@ class MyLivingRoomFragment : Fragment() {
     lateinit var database:Database
     lateinit var mutableDoc: MutableDocument
     private lateinit var livingSwitchStates: String
-    private lateinit var myLivstates: String
     private lateinit var myLivingstates: String
 
     var livingRoomList: ArrayList<LivingFixtureItem> = ArrayList()
@@ -175,7 +174,6 @@ class MyLivingRoomFragment : Fragment() {
         livingRoomList.clear()
         val livingSwitchArray = JSONArray(livingSwitchStates)
         livingSwitchArray.put(position,state)
-        Log.i("fixtureslivingstr",livingSwitchArray.toString())
         mutableDoc = MutableDocument()
             .setString("livingFixtureStates", livingSwitchArray.toString())
         database.save(mutableDoc)
